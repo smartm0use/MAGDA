@@ -1488,7 +1488,7 @@
   }
 
   async function load(force = false) {
-    if (state.pendingRoute) return;
+    if (state.welcomeMode || state.pendingRoute) return;
     if (state.view === "route") {
       if (state.route) return refreshRoute(force);
       return;
@@ -1585,6 +1585,8 @@
   }
 
   function syncUrl() {
+    // Display defaults are not a route choice while the welcome modal is open.
+    if (state.welcomeMode) return;
     const params = new URLSearchParams();
     params.set("layout", String(state.cols));
     if (state.mode === "snapshot") params.set("mode", "snapshot");
@@ -2144,16 +2146,12 @@
     } catch (error) {
       state.view = "fixed";
       state.route = null;
-      state.routeFrom = null;
-      state.routeTo = null;
-      state.formFrom = null;
-      state.formTo = null;
       syncBrand();
       syncRouteForm();
       updateTabs();
-      showError(`Percorso non disponibile: ${error.message}`);
-      syncUrl();
-      load(true);
+      stopAuto();
+      openRoutePanel({ welcome: true });
+      setRouteStatus(`Percorso non disponibile: ${error.message}`, "error");
     }
   }
 
@@ -2268,12 +2266,12 @@
   });
 
   function isFirstLanding() {
-    const params = new URLSearchParams(location.search);
-    if (new URLSearchParams(location.hash.slice(1)).get("view") === "route") {
-      return false;
-    }
-    return !["dir", "layout", "mode"].some((key) =>
-      params.has(key)
+    const params = new URLSearchParams(location.hash.slice(1));
+    // Layout and direction preferences alone never identify a chosen route.
+    return !(
+      params.get("view") === "route" &&
+      parsePointParam(params.get("from")) &&
+      parsePointParam(params.get("to"))
     );
   }
 
@@ -2327,7 +2325,7 @@
 
   const welcome = isFirstLanding();
   applyUrlState();
-  syncUrl();
+  if (!welcome) syncUrl();
   updateTabs();
   syncLayoutButtons();
   syncModeButton();
