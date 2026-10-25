@@ -1697,9 +1697,34 @@
     routeBothDirections.checked = state.routeBothDirections;
   }
 
+  function isWelcomeDaytime(date = new Date()) {
+    // Approximate sunrise/sunset in central Italy (42.5° N, 12.5° E).
+    // UTC solar time avoids depending on the visitor's timezone or DST.
+    const radians = Math.PI / 180;
+    const day = Math.floor(
+      (Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) -
+        Date.UTC(date.getUTCFullYear(), 0, 0)) / 86400000
+    );
+    const declination = 23.44 * radians * Math.sin(360 * (284 + day) / 365 * radians);
+    const cosHourAngle = -Math.tan(42.5 * radians) * Math.tan(declination);
+    const halfDay = Math.acos(Math.max(-1, Math.min(1, cosHourAngle))) / radians / 15;
+    const b = 360 * (day - 81) / 364 * radians;
+    const equationOfTime = 9.87 * Math.sin(2 * b) - 7.53 * Math.cos(b) - 1.5 * Math.sin(b);
+    const noonUtc = 12 - 12.5 / 15 - equationOfTime / 60;
+    const hour = date.getUTCHours() + date.getUTCMinutes() / 60;
+    return hour >= noonUtc - halfDay && hour < noonUtc + halfDay;
+  }
+
+  function chooseWelcomeGroup(date = new Date(), random = Math.random) {
+    // Groups 01–05 are daytime snapshots; 06–10 are nighttime snapshots.
+    const count = WELCOME_GROUP_COUNT / 2;
+    const first = isWelcomeDaytime(date) ? 1 : count + 1;
+    return String(first + Math.floor(random() * count)).padStart(2, "0");
+  }
+
   function loadWelcomeBackground() {
     welcomeBg.replaceChildren();
-    const group = String(Math.floor(Math.random() * WELCOME_GROUP_COUNT) + 1).padStart(2, "0");
+    const group = chooseWelcomeGroup();
     for (let index = 1; index <= WELCOME_IMAGE_COUNT; index += 1) {
       const image = String(index).padStart(2, "0");
       const img = document.createElement("img");
