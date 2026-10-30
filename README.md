@@ -20,6 +20,22 @@ Demo: <https://smartm0use.github.io/MAGDA/>
   ritorno.
 - Layout, modalità e direzione salvati nella query string dell'URL. I percorsi
   si condividono tramite il pulsante "Copia link al percorso".
+- Su mobile, trascinamento verso il basso dall'inizio della griglia per aggiornare
+  le webcam. Nella ricerca, Invio seleziona il primo suggerimento e passa
+  all'arrivo; dall'arrivo avvia il percorso.
+
+## Installazione sui dispositivi
+
+MAGDA è una PWA: aprire il sito HTTPS e usare **Installa app** nel menu di Chrome
+su Android o desktop. Su iPhone/iPad, usare Safari e **Condividi > Aggiungi alla
+schermata Home** (attivando **Apri come app web**, se presente).
+
+L'interfaccia viene conservata per la riapertura offline; webcam, aggiornamenti
+dei dati e ricerca del percorso richiedono Internet. Il service worker non
+memorizza filmati o dati di traffico e prova prima la rete per l'interfaccia.
+Manifest e service worker usano percorsi relativi, compatibili con `/MAGDA/`.
+Quando si modifica l'elenco dei file precaricati, incrementare la versione
+`magda-shell-v1` in `site/sw.js`.
 
 ## Avvio in locale
 

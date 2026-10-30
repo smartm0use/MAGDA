@@ -7,6 +7,10 @@
   <meta name="referrer" content="strict-origin">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://video.autostrade.it; media-src 'self' https://video.autostrade.it; connect-src 'self' https://photon.komoot.io https://nominatim.openstreetmap.org https://router.project-osrm.org; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <link rel="icon" href="./logo-mark-64.png" type="image/png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#11161c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="MAGDA">
   <link rel="apple-touch-icon" href="./logo-mark.png">
   <meta name="description" content="Vista webcam del network autostradale italiano, con ricerca del percorso e griglia a schermo intero. Progetto open source non affiliato ad Autostrade per l'Italia.">
   <meta property="og:title" content="MAGDA · Make Autostrade Great Damn Again">
@@ -157,7 +161,7 @@
       <label for="route-from">Partenza</label>
       <div class="route-input-wrap">
         <span class="route-pin">A</span>
-        <input id="route-from" type="text" placeholder="Es. Milano, Bologna, Roma" autocomplete="off" spellcheck="false">
+        <input id="route-from" type="text" placeholder="Es. Milano, Bologna, Roma" autocomplete="off" spellcheck="false" enterkeyhint="next">
       </div>
       <ul id="suggest-from" class="route-suggestions" hidden></ul>
     </div>
@@ -166,7 +170,7 @@
       <label for="route-to">Arrivo</label>
       <div class="route-input-wrap">
         <span class="route-pin pin-b">B</span>
-        <input id="route-to" type="text" placeholder="Es. Bari, Napoli, Venezia" autocomplete="off" spellcheck="false">
+        <input id="route-to" type="text" placeholder="Es. Bari, Napoli, Venezia" autocomplete="off" spellcheck="false" enterkeyhint="go">
       </div>
       <ul id="suggest-to" class="route-suggestions" hidden></ul>
     </div>
@@ -194,5 +198,6 @@
   <div id="error" class="error" role="alert" hidden></div>
 
   <script src="./app.js"></script>
+  <script src="./pwa.js"></script>
 </body>
 </html>

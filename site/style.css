@@ -577,6 +577,27 @@ button:focus-visible {
 .camera-road {
   font-size: 10.5px;
   font-weight: 700;
+  padding: 2px 5px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 3px;
+  background: #123044;
+  color: #d4f0ff;
+  white-space: nowrap;
+}
+
+.pull-status {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 12px;
+  pointer-events: none;
 }
 
 .overlay-top .km {

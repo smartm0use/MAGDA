@@ -1960,6 +1960,48 @@
     }
   }
 
+  let routeInputPending = false;
+
+  async function advanceRouteInput(field, input) {
+    if (routeInputPending || routeSubmit.disabled) return;
+    const selected = field === "from" ? state.formFrom : state.formTo;
+    if (!selected) {
+      const query = input.value.trim();
+      if (query.length < 3) {
+        setRouteStatus("Inserisci almeno tre caratteri per cercare una località.", "error");
+        return;
+      }
+      const suggestion = state.suggestions[field][0];
+      hideSuggestions(field);
+      routeInputPending = true;
+      try {
+        setRouteStatus("Ricerca località…", "loading");
+        const result = suggestion || (await geocode(query))[0];
+        if (input.value.trim() !== query || routePanel.hidden) return;
+        if (!result) {
+          setRouteStatus("Nessuna località trovata: prova un nome più specifico.", "error");
+          return;
+        }
+        selectSuggestion(field, result);
+      } catch (error) {
+        if (input.value.trim() === query && !routePanel.hidden) {
+          setRouteStatus("Ricerca non disponibile in questo momento. Riprova.", "error");
+        }
+        return;
+      } finally {
+        routeInputPending = false;
+      }
+    }
+    if (field === "from") {
+      routeTo.focus();
+    } else if (!state.formFrom) {
+      routeFrom.focus();
+    } else {
+      input.blur();
+      await calculateRoute();
+    }
+  }
+
   function bindRouteInput(field, input) {
     input.addEventListener("input", () => {
       if (field === "from") {
@@ -1983,12 +2025,9 @@
         }
         return;
       }
-      if (event.key === "Enter") {
-        const list = field === "from" ? suggestFrom : suggestTo;
-        if (!list.hidden && state.suggestions[field].length) {
-          event.preventDefault();
-          selectSuggestion(field, state.suggestions[field][0]);
-        }
+      if (event.key === "Enter" && !event.isComposing) {
+        event.preventDefault();
+        advanceRouteInput(field, input);
       }
     });
   }
@@ -2055,6 +2094,7 @@
   }
 
   async function calculateRoute() {
+    if (routeSubmit.disabled) return;
     if (!state.formFrom || !state.formTo) {
       setRouteStatus(
         "Scegli partenza e arrivo dall'elenco dei suggerimenti.",
@@ -2193,6 +2233,54 @@
   document
     .getElementById("refresh")
     .addEventListener("click", () => load(true));
+
+  const pullStatus = document.createElement("div");
+  pullStatus.className = "pull-status";
+  pullStatus.setAttribute("role", "status");
+  pullStatus.hidden = true;
+  document.body.append(pullStatus);
+  let pullStart = null;
+  let pullDistance = 0;
+  let pullRefreshing = false;
+  const resetPull = () => {
+    pullStart = null;
+    pullDistance = 0;
+    if (!pullRefreshing) pullStatus.hidden = true;
+  };
+  grid.addEventListener("touchstart", (event) => {
+    resetPull();
+    if (!isMobile() || pullRefreshing || grid.scrollTop > 0 ||
+        !routePanel.hidden || !statsPanel.hidden || !privacyPanel.hidden ||
+        document.fullscreenElement || event.touches.length !== 1) return;
+    pullStart = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+  }, { passive: true });
+  grid.addEventListener("touchmove", (event) => {
+    if (!pullStart) return;
+    if (event.touches.length !== 1) return resetPull();
+    const dx = event.touches[0].clientX - pullStart.x;
+    const dy = event.touches[0].clientY - pullStart.y;
+    if (dy < 0 || Math.abs(dx) > Math.max(15, dy)) return resetPull();
+    pullDistance = dy;
+    if (dy < 12) return;
+    if (event.cancelable) event.preventDefault();
+    pullStatus.hidden = false;
+    pullStatus.textContent = dy >= 80 ? "Rilascia per aggiornare" : "Tira per aggiornare";
+  }, { passive: false });
+  grid.addEventListener("touchcancel", resetPull, { passive: true });
+  grid.addEventListener("touchend", async () => {
+    const refresh = pullStart && pullDistance >= 80;
+    resetPull();
+    if (!refresh) return;
+    pullRefreshing = true;
+    pullStatus.hidden = false;
+    pullStatus.textContent = "Aggiornamento…";
+    try {
+      await load(true);
+    } finally {
+      pullRefreshing = false;
+      pullStatus.hidden = true;
+    }
+  }, { passive: true });
   document.getElementById("fullscreen").addEventListener("click", () => {
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
