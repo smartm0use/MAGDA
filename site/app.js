@@ -1027,54 +1027,56 @@
       tile.append(missing);
     }
 
-    const overlay = document.createElement("div");
-    overlay.className = "overlay";
-
-    const top = document.createElement("div");
-    top.className = "overlay-top";
-
-    const nameParts =
-      camera.name.match(/^(.+?)\s+km\.?\s*\d+(?:[.,+]\d+)?\s*/i) ||
-      camera.name.match(/^([ADTR]\d+\w*|VAR)\s+/i);
-    const road = document.createElement("span");
-    road.className = "camera-road";
-    road.textContent = nameParts ? nameParts[1] : camera.code;
-
-    const direction = relativeDirection(camera.direction);
-    const badge = document.createElement("span");
-    badge.className = `badge badge-${camera.direction || "none"}`;
-    badge.textContent = direction.label;
-    badge.title = direction.hint;
-
-    const km = document.createElement("span");
-    km.className = "km";
-    km.textContent =
-      camera.km != null
-        ? `km ${String(camera.km).replace(".", ",")}`
-        : "";
-
-    top.append(road, badge, km);
-
-    const name = document.createElement("h2");
-    name.className = "name";
-    name.textContent = nameParts
-      ? camera.name.slice(nameParts[0].length).trim()
-      : camera.name;
-    name.title = camera.name;
-
-    const meta = document.createElement("p");
-    meta.className = "meta";
-    const metaLabel = document.createElement("span");
-    metaLabel.className = "meta-label";
-    metaLabel.textContent = "Aggiornata ";
-    if (camera.capturedAt) {
-      meta.append(metaLabel, formatCaptured(camera.capturedAt));
-    } else {
-      meta.textContent = "Orario non disponibile";
-    }
-
-    overlay.append(top, name, meta);
-    tile.append(overlay);
+    // Riquadro informativo disattivato su desktop e mobile: le informazioni
+    // sono già impresse nei filmati Autostrade. Codice conservato per ripristinarlo.
+    // const overlay = document.createElement("div");
+    // overlay.className = "overlay";
+    //
+    // const top = document.createElement("div");
+    // top.className = "overlay-top";
+    //
+    // const nameParts =
+    //   camera.name.match(/^(.+?)\s+km\.?\s*\d+(?:[.,+]\d+)?\s*/i) ||
+    //   camera.name.match(/^([ADTR]\d+\w*|VAR)\s+/i);
+    // const road = document.createElement("span");
+    // road.className = "camera-road";
+    // road.textContent = nameParts ? nameParts[1] : camera.code;
+    //
+    // const direction = relativeDirection(camera.direction);
+    // const badge = document.createElement("span");
+    // badge.className = `badge badge-${camera.direction || "none"}`;
+    // badge.textContent = direction.label;
+    // badge.title = direction.hint;
+    //
+    // const km = document.createElement("span");
+    // km.className = "km";
+    // km.textContent =
+    //   camera.km != null
+    //     ? `km ${String(camera.km).replace(".", ",")}`
+    //     : "";
+    //
+    // top.append(road, badge, km);
+    //
+    // const name = document.createElement("h2");
+    // name.className = "name";
+    // name.textContent = nameParts
+    //   ? camera.name.slice(nameParts[0].length).trim()
+    //   : camera.name;
+    // name.title = camera.name;
+    //
+    // const meta = document.createElement("p");
+    // meta.className = "meta";
+    // const metaLabel = document.createElement("span");
+    // metaLabel.className = "meta-label";
+    // metaLabel.textContent = "Aggiornata ";
+    // if (camera.capturedAt) {
+    //   meta.append(metaLabel, formatCaptured(camera.capturedAt));
+    // } else {
+    //   meta.textContent = "Orario non disponibile";
+    // }
+    //
+    // overlay.append(top, name, meta);
+    // tile.append(overlay);
 
     const openFullscreen = () => {
       if (document.fullscreenElement) {
