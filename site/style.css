@@ -479,8 +479,7 @@ button:focus-visible {
   font-size: 10px;
 }
 
-.grid[data-cols="all"] .meta,
-.grid[data-cols="all"] .km {
+.grid[data-cols="all"] .meta {
   display: none;
 }
 
@@ -575,6 +574,15 @@ button:focus-visible {
   background: var(--muted);
 }
 
+.camera-road {
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.overlay-top .km {
+  margin-left: auto;
+}
+
 .badge-nord {
   background: var(--nord);
 }
@@ -633,8 +641,7 @@ button:focus-visible {
   font-size: 9.5px;
 }
 
-.grid[data-cols="4"] .meta,
-.grid[data-cols="4"] .km {
+.grid[data-cols="4"] .meta {
   display: none;
 }
 
@@ -1410,6 +1417,47 @@ body.is-welcome .route-backdrop {
 }
 
 @media (max-width: 700px), (max-width: 950px) and (max-height: 500px) {
+  .grid .tile .overlay {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    top: 4px;
+    right: 4px;
+    max-width: calc(100% - 8px);
+    padding: 3px 5px;
+    white-space: nowrap;
+  }
+
+  .grid .tile .overlay-top {
+    flex: 0 0 auto;
+    gap: 4px;
+  }
+
+  .grid .tile .name {
+    min-width: 0;
+    margin: 0;
+    font-size: 9px;
+  }
+
+  .grid .tile .camera-road,
+  .grid .tile .km,
+  .grid .tile .meta {
+    display: block;
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 8px;
+  }
+
+  .grid .tile .badge {
+    font-size: 8px;
+    letter-spacing: 0;
+    padding: 1px 3px;
+  }
+
+  .grid .tile .meta-label {
+    display: none;
+  }
+
   #layout-group,
   #pager-group,
   #auto {
