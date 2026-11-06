@@ -1379,6 +1379,10 @@ body.is-welcome .route-backdrop {
     row-gap: 6px;
   }
 
+  .github-link {
+    margin-left: auto;
+  }
+
   .masthead-stats {
     order: 3;
     width: 100%;
